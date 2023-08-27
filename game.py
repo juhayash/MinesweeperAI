@@ -1,3 +1,7 @@
+# game.py
+from levels import generate_best_level
+# from levels import levels
+
 import random
 from pprint import pprint
 from functools import partial
@@ -13,51 +17,97 @@ That number is the number of how many mines are surrounding it.\
 If you find the mine, you can open "unopened" squares around it, opening more areas.'
 
 class Application(tk.Frame):
+    # The constructor __init__ initializes some variables related to the game level.
 	def __init__(self, master=None):
-		super().__init__(master=master)
+		super().__init__(master)
 		self.master = master
 		self.grid()
+		# self.level = tk.StringVar(value='easy') # Stores the current level which is initially set to 'easy'.
+		# self.level_dict = {'easy':'easy', 'medium':'medium', 'hard':'hard'} #  Dictionary storing the number of mines based on the level.
+		# self.mine_dict = {'easy':10, 'medium':12, 'hard':15}
 
+		# self.highscore = 0
+		self.initialize_variables()
+		self.draw_main_frame()
+		self.set_best_level() # set the best level
+
+	def initialize_variables(self):
 		self.level = tk.StringVar(value='easy')
-		self.level_dict = {'easy':'easy', 'medium':'medium', 'hard':'hard'}
-		self.mine_dict = {'easy':10, 'medium':12, 'hard':15}
-
+		self.level_dict = {'easy': 'easy', 'medium': 'medium', 'hard': 'hard'}
+		self.mine_dict = {'easy': 10, 'medium': 12, 'hard': 15}
 		self.highscore = 0
 
-		self.draw_main_frame()
+	# RadioButtons are created to allow the user to select a game level
+	# def draw_main_frame(self):
+	# 	self.main_frame = tk.Frame(self, width=345, height=485)
+	# 	self.main_frame.grid(row=0, column=0)
+	# 	self.main_frame.grid_propagate(False)
 
+	# 	self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
+	# 	self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
+
+	# 	self.level_frame = tk.LabelFrame(self.main_frame, text='Select Level ', 
+	# 		width=250, height=60, fg='dodgerblue3', font=('verdana', 10))
+	# 	self.level_frame.grid(row=2, column=1, columnspan=4, pady=15)
+	# 	self.level_frame.grid_propagate(False)
+
+	# 	i = 0
+	# 	# The value of self.level is updated based on the RadioButton selected by the user
+	# 	for text, value in self.level_dict.items():
+	# 		tk.Radiobutton(self.level_frame, text=text, value=value, 
+	# 				variable=self.level).grid(row=0, column=i, pady=6, padx=7)
+	# 		i += 1
+
+	# 	self.start_btn = ttk.Button(self.main_frame, text='Start Game', width=15,
+	# 				command=self.start_playing)
+	# 	self.start_btn.grid(row=3, column=2, columnspan=2, pady=10)
+
+	# 	self.help_btn = ttk.Button(self.main_frame, text='Help', width=15,
+	# 				command=self.help_window)
+	# 	self.help_btn.grid(row=4, column=2, columnspan=2, pady=10)
+
+	# 	self.quit_btn = ttk.Button(self.main_frame, text='Quit', width=15,
+	# 				command=self.master.destroy)
+	# 	self.quit_btn.grid(row=5, column=2, columnspan=2, pady=10)
+  
+	# 	self.best_level_btn = ttk.Button(self.main_frame, text='Best Level', width=15,
+    #                 command=self.set_best_level)
+    #     self.best_level_btn.grid(row=6, column=2, columnspan=2, pady=10)
+    
+    
 	def draw_main_frame(self):
-		self.main_frame = tk.Frame(self, width=345, height=485)
-		self.main_frame.grid(row=0, column=0)
-		self.main_frame.grid_propagate(False)
-
+		self.main_frame = self.create_frame(self, 345, 485, row=0, column=0)
+		minesweeper_logo = tk.PhotoImage(file='icons/logo.png')
 		self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
 		self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
+		self.draw_level_frame()
+		self.draw_buttons()
 
-		self.level_frame = tk.LabelFrame(self.main_frame, text='Select Level ', 
-			width=250, height=60, fg='dodgerblue3', font=('verdana', 10))
-		self.level_frame.grid(row=2, column=1, columnspan=4, pady=15)
-		self.level_frame.grid_propagate(False)
+	def draw_level_frame(self):
+		self.level_frame = self.create_frame(self.main_frame, 250, 60, row=2, column=1, columnspan=4, pady=15)
+		for i, (text, value) in enumerate(self.level_dict.items()):
+			tk.Radiobutton(self.level_frame, text=text, value=value, variable=self.level).grid(row=0, column=i, pady=6, padx=7)
 
-		i = 0
-		for text, value in self.level_dict.items():
-			tk.Radiobutton(self.level_frame, text=text, value=value, 
-					variable=self.level).grid(row=0, column=i, pady=6, padx=7)
-			i += 1
-
-		self.start_btn = ttk.Button(self.main_frame, text='Start Game', width=15,
-					command=self.start_playing)
-		self.start_btn.grid(row=3, column=2, columnspan=2, pady=10)
-
-		self.help_btn = ttk.Button(self.main_frame, text='Help', width=15,
-					command=self.help_window)
-		self.help_btn.grid(row=4, column=2, columnspan=2, pady=10)
-
-		self.quit_btn = ttk.Button(self.main_frame, text='Quit', width=15,
-					command=self.master.destroy)
-		self.quit_btn.grid(row=5, column=2, columnspan=2, pady=10)
-
-
+	def draw_buttons(self):
+		self.create_button(self.main_frame, 'Start Game', self.start_playing, row=3, column=2, columnspan=2, pady=10)
+		self.create_button(self.main_frame, 'Help', self.help_window, row=4, column=2, columnspan=2, pady=10)
+		self.create_button(self.main_frame, 'Quit', self.master.destroy, row=5, column=2, columnspan=2, pady=10)
+		self.create_button(self.main_frame, 'Best Level', self.set_best_level, row=6, column=2, columnspan=2, pady=10)
+  
+	def create_frame(self, parent, width, height, **grid_options):
+		frame = tk.Frame(parent, width=width, height=height)
+		frame.grid(**grid_options)
+		frame.grid_propagate(False)
+		return frame
+ 
+	def create_button(self, parent, text, command, **grid_options):
+		btn = ttk.Button(parent, text=text, width=15, command=command)
+		btn.grid(**grid_options)
+  
+	def set_best_level(self):
+		best_level = generate_best_level()
+		self.level.set(best_level)
+    
 	def draw_game_frames(self):
 		self.header_frame = tk.Frame(self, width=345, height=85)
 		self.body_frame = tk.LabelFrame(self, width=345, height=400, bg='gray70',
@@ -108,6 +158,7 @@ class Application(tk.Frame):
 						width=10, bg='white')
 		self.others_label.grid(row=0, column=0, pady=14, padx=110)
 
+	# he start_playing method initializes the game based on the selected level.
 	def start_playing(self):
 		self.main_frame.destroy()
 
@@ -118,9 +169,12 @@ class Application(tk.Frame):
 		self.buttons_list = []
 		self.draw_cells()
 
+		# Retrieves the current game level
 		m = self.level.get()
+		# Sets the number of mines based on the selected level
 		self.numMines = self.mine_dict[m]
 		self.others_label['text'] = f'Mines : {self.numMines}'
+		# Calls start_game method to set up the game board
 		self.start_game()
 		
 	def draw_cells(self):
@@ -141,9 +195,10 @@ class Application(tk.Frame):
 				buttons.append(btn)
 			self.buttons_list.append(buttons)
 
+	# This method initializes some variables for the game and calls place_mines
 	def start_game(self):
-		self.board = [[' ' for i in range(9)] for j in range(9)]
-		self.mines = []
+		self.board = [[' ' for i in range(9)] for j in range(9)] # Initializing the game board
+		self.mines = [] # List to keep track of where the mines are placed
 
 		self.first_Move = True
 		self.gameRunning = True
@@ -155,6 +210,7 @@ class Application(tk.Frame):
 		self.timer_label['text'] = '00:00:00'
 		self.after(1000, self.update_timer)
 
+	# This method is responsible for placing mines on the board randomly
 	def place_mines(self, num):
 		if num > 0:
 			x = random.randint(0, 8)
@@ -316,14 +372,18 @@ class Application(tk.Frame):
 		tk.Label(win, text=msg, wraplength=180, anchor='w').grid(row=0, column=0, padx=10, pady=4)
 
 if __name__ == '__main__':
+	# root = tk.Tk()
+	# ttk.Style().theme_use('clam')
+	# root.title('Minesweeper')
+	# root.geometry('345x450+500+150')
+
+	# mine_icon = PhotoImage(file='icons/mine.png')
+	# minesweeper_logo = PhotoImage(file='icons/logo.png')
+	# sad_face = PhotoImage(file='icons/sad.png')
+
+	# app = Application(master=root)
+	# app.mainloop()
+
 	root = tk.Tk()
-	ttk.Style().theme_use('clam')
-	root.title('Minesweeper')
-	root.geometry('345x450+500+150')
-
-	mine_icon = PhotoImage(file='icons/mine.png')
-	minesweeper_logo = PhotoImage(file='icons/logo.png')
-	sad_face = PhotoImage(file='icons/sad.png')
-
 	app = Application(master=root)
 	app.mainloop()

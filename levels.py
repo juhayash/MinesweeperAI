@@ -1,11 +1,12 @@
+# levels.py
 import copy
-import heapq
-import multiprocessing.pool as mpool
+# import heapq
+# import multiprocessing.pool as mpool
 import os
 import random
-import shutil
+# import shutil
 import time
-import math
+# import math
 
 # have to make a class Individual or replace it or something 
 # also replace the placeholder
@@ -22,6 +23,7 @@ options = [
 width = 10  # Width of the Minesweeper grid
 height = 10  # Height of the Minesweeper grid
 bomb_density = 0.2  # Proportion of cells that are bombs
+mutation_rate = 0.01 # added mutation rate
 
 # Update Individual_Grid class for Minesweeper
 class Individual_Grid(object):
@@ -64,10 +66,10 @@ class Individual_Grid(object):
             for y in range(height):
                 for x in range(width):
                     if random.random() < mutation_rate:
-                        if new_genome[y][x] == "-":
-                            new_genome[y][x] = "B" if random.random() < 0.2 else "-"
+                        if new_genome[y][x] == "E":
+                            new_genome[y][x] = "B" if random.random() < bomb_density else "E"
                         elif new_genome[y][x] == "B":
-                            new_genome[y][x] = "-" if random.random() < 0.2 else "B"
+                            new_genome[y][x] = "E" if random.random() < bomb_density else "B"
             
             return new_genome
 
@@ -84,6 +86,9 @@ class Individual_Grid(object):
         g = [random.choices(options, weights=[1 - bomb_density, bomb_density] + [1] * 8, k=width)
              for _ in range(height)]
         return cls(g)
+    
+    def to_level(self): # New method to output the genome
+        return self.genome
 
 # Update generate_successors for Minesweeper
 def generate_successors(population):
@@ -102,7 +107,7 @@ def generate_successors(population):
 def ga():
     pop_limit = 100
     generations = 50
-    population = [Individual.random_individual() for _ in range(pop_limit)]
+    population = [Individual_Grid.random_individual() for _ in range(pop_limit)]
 
     for generation in range(generations):
         print("Generation:", generation + 1)
@@ -112,19 +117,26 @@ def ga():
             individual.calculate_fitness()
         
         # Sort population by fitness in descending order
-        population.sort(key=lambda ind: ind.fitness(), reverse=True)
+        population.sort(key=lambda ind: ind._fitness, reverse=True)
         
         # Print information about the best individual in this generation
         best_individual = population[0]
-        print("Best fitness:", best_individual.fitness())
+        print("Best fitness:", best_individual._fitness)
         
         # Generate successors for the next generation
         population = generate_successors(population)
     
     return population
 
+def generate_best_level():
+    final_gen = sorted(ga(), key=lambda x: x._fitness, reverse=True)
+    best = final_gen[0]
+    return best.to_level()
+
 if __name__ == "__main__":
-    final_gen = sorted(ga(), key=Individual.fitness, reverse=True)
+    if not os.path.exists('levels'):  # Ensure levels directory exists
+        os.makedirs('levels')
+    final_gen = sorted(ga(), key=lambda x: x._fitness, reverse=True)
     best = final_gen[0]
     print("Best fitness:", best.fitness())
     now = time.strftime("%m_%d_%H_%M_%S")
