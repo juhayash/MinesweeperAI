@@ -77,7 +77,7 @@ class Application(tk.Frame):
     
 	def draw_main_frame(self):
 		self.main_frame = self.create_frame(self, 345, 485, row=0, column=0)
-		minesweeper_logo = tk.PhotoImage(file='icons/logo.png')
+		# minesweeper_logo = tk.PhotoImage(file='icons/logo.png')
 		self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
 		self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
 		self.draw_level_frame()
@@ -241,6 +241,7 @@ class Application(tk.Frame):
 				else:
 					btn.config(width=24, height=26)
 					btn['bg'] = 'red'
+					# mine_icon = PhotoImage(file="icons/mine.png")
 					btn['image'] = mine_icon
 					self.showAllMines()	
 					self.game_lost()
@@ -313,6 +314,7 @@ class Application(tk.Frame):
 				btn['bg'] = 'red'
 
 				btn.config(width=24, height=26)
+				# mine_icon = PhotoImage(file="icons/mine.png")
 				btn['image'] = mine_icon
 
 	def redraw_body_frame(self):
@@ -352,6 +354,7 @@ class Application(tk.Frame):
 		self.top.resizable(0,0)
 		self.top.protocol("WM_DELETE_WINDOW", self.master.destroy)
 
+		# sad_face = PhotoImage(file='icons/sad.png')
 		tk.Label(self.top, text=' You Lost', image=sad_face, fg='black',
 				font=('verdana', 10, 'bold'), compound=tk.LEFT,
 				).grid(row=0, column=0, padx=50, pady=5,
@@ -372,18 +375,14 @@ class Application(tk.Frame):
 		tk.Label(win, text=msg, wraplength=180, anchor='w').grid(row=0, column=0, padx=10, pady=4)
 
 if __name__ == '__main__':
-	# root = tk.Tk()
-	# ttk.Style().theme_use('clam')
-	# root.title('Minesweeper')
-	# root.geometry('345x450+500+150')
-
-	# mine_icon = PhotoImage(file='icons/mine.png')
-	# minesweeper_logo = PhotoImage(file='icons/logo.png')
-	# sad_face = PhotoImage(file='icons/sad.png')
-
-	# app = Application(master=root)
-	# app.mainloop()
-
 	root = tk.Tk()
+	ttk.Style().theme_use('clam')
+	root.title('Minesweeper')
+	root.geometry('345x450+500+150')
+
+	mine_icon = PhotoImage(file='icons/mine.png')
+	minesweeper_logo = PhotoImage(file='icons/logo.png')
+	sad_face = PhotoImage(file='icons/sad.png')
+
 	app = Application(master=root)
 	app.mainloop()
