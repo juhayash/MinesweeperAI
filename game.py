@@ -1,6 +1,5 @@
 # game.py
 from levels import generate_best_level
-# from levels import levels
 
 import random
 from pprint import pprint
@@ -11,73 +10,29 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import PhotoImage
 from tkinter import messagebox
-
+ 
 msg = 'Click a square, you get a number.\
 That number is the number of how many mines are surrounding it.\
 If you find the mine, you can open "unopened" squares around it, opening more areas.'
 
 class Application(tk.Frame):
-    # The constructor __init__ initializes some variables related to the game level.
+
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
 		self.grid()
-		# self.level = tk.StringVar(value='easy') # Stores the current level which is initially set to 'easy'.
-		# self.level_dict = {'easy':'easy', 'medium':'medium', 'hard':'hard'} #  Dictionary storing the number of mines based on the level.
-		# self.mine_dict = {'easy':10, 'medium':12, 'hard':15}
-
-		# self.highscore = 0
 		self.initialize_variables()
 		self.draw_main_frame()
 		self.set_best_level() # set the best level
 
 	def initialize_variables(self):
-		self.level = tk.StringVar(value='easy')
+		self.level = tk.StringVar(value='easy') # level is initially set as easy
 		self.level_dict = {'easy': 'easy', 'medium': 'medium', 'hard': 'hard'}
-		self.mine_dict = {'easy': 10, 'medium': 12, 'hard': 15}
+		self.mine_dict = {'easy': 8, 'medium': 10, 'hard': 12}
 		self.highscore = 0
-
-	# RadioButtons are created to allow the user to select a game level
-	# def draw_main_frame(self):
-	# 	self.main_frame = tk.Frame(self, width=345, height=485)
-	# 	self.main_frame.grid(row=0, column=0)
-	# 	self.main_frame.grid_propagate(False)
-
-	# 	self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
-	# 	self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
-
-	# 	self.level_frame = tk.LabelFrame(self.main_frame, text='Select Level ', 
-	# 		width=250, height=60, fg='dodgerblue3', font=('verdana', 10))
-	# 	self.level_frame.grid(row=2, column=1, columnspan=4, pady=15)
-	# 	self.level_frame.grid_propagate(False)
-
-	# 	i = 0
-	# 	# The value of self.level is updated based on the RadioButton selected by the user
-	# 	for text, value in self.level_dict.items():
-	# 		tk.Radiobutton(self.level_frame, text=text, value=value, 
-	# 				variable=self.level).grid(row=0, column=i, pady=6, padx=7)
-	# 		i += 1
-
-	# 	self.start_btn = ttk.Button(self.main_frame, text='Start Game', width=15,
-	# 				command=self.start_playing)
-	# 	self.start_btn.grid(row=3, column=2, columnspan=2, pady=10)
-
-	# 	self.help_btn = ttk.Button(self.main_frame, text='Help', width=15,
-	# 				command=self.help_window)
-	# 	self.help_btn.grid(row=4, column=2, columnspan=2, pady=10)
-
-	# 	self.quit_btn = ttk.Button(self.main_frame, text='Quit', width=15,
-	# 				command=self.master.destroy)
-	# 	self.quit_btn.grid(row=5, column=2, columnspan=2, pady=10)
-  
-	# 	self.best_level_btn = ttk.Button(self.main_frame, text='Best Level', width=15,
-    #                 command=self.set_best_level)
-    #     self.best_level_btn.grid(row=6, column=2, columnspan=2, pady=10)
-    
     
 	def draw_main_frame(self):
 		self.main_frame = self.create_frame(self, 345, 485, row=0, column=0)
-		# minesweeper_logo = tk.PhotoImage(file='icons/logo.png')
 		self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
 		self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
 		self.draw_level_frame()
@@ -178,9 +133,9 @@ class Application(tk.Frame):
 		self.start_game()
 		
 	def draw_cells(self):
-		for row in range(9):
+		for row in range(7):
 			buttons = []
-			for col in range(9):
+			for col in range(8):
 				if row == 0:
 					pady = 3
 				else:
@@ -197,7 +152,7 @@ class Application(tk.Frame):
 
 	# This method initializes some variables for the game and calls place_mines
 	def start_game(self):
-		self.board = [[' ' for i in range(9)] for j in range(9)] # Initializing the game board
+		self.board = [[' ' for i in range(8)] for j in range(7)] # Initializing the game board
 		self.mines = [] # List to keep track of where the mines are placed
 
 		self.first_Move = True
@@ -213,8 +168,8 @@ class Application(tk.Frame):
 	# This method is responsible for placing mines on the board randomly
 	def place_mines(self, num):
 		if num > 0:
-			x = random.randint(0, 8)
-			y = random.randint(0, 8)
+			x = random.randint(0, 6)
+			y = random.randint(0, 7)
 
 			if (x,y) in self.mines:
 				self.place_mines(num)
@@ -222,6 +177,8 @@ class Application(tk.Frame):
 				self.board[x][y] = 'X'
 				self.mines.append((x,y))
 				self.place_mines(num-1)
+				print("Mines placed at:", self.mines)
+
 
 	def check_cell(self, x, y):
 		btn = self.buttons_list[x][y]
@@ -233,7 +190,7 @@ class Application(tk.Frame):
 				if self.first_Move:
 					self.board[x][y] = ' '
 					self.mines.remove((x,y))
-					self.place_mines(1)
+					self.place_mines(0)
 					self.first_Move = False
 
 					self.updateAdjecentCells(btn, x, y)
@@ -250,11 +207,20 @@ class Application(tk.Frame):
 				self.updateAdjecentCells(btn, x, y)
 				self.update_score(1)
 
+		print(f"Cell at ({x}, {y}) clicked")
+
+
 	def isMine(self, row, col):
-		return True if (row, col) in self.mines else False
+		is_mine = True if (row, col) in self.mines else False
+		print(f"Cell at ({row}, {col}) is a mine: {is_mine}")
+		return is_mine
+
 
 	def isValidCell(self, row, col):
-		return ((row >= 0 and row < 9) and (col >= 0 and col < 9))
+		is_valid = (row >= 0 and row < 8) and (col >= 0 and col < 7)
+		print(f"Cell at ({row}, {col}) is valid: {is_valid}")
+		return is_valid
+
 
 	def updateAdjecentCells(self, btn, row, col):
 		num = self.checkAdjecentCells(row, col)
@@ -283,28 +249,42 @@ class Application(tk.Frame):
 			self.timer_label['text'] = string
 			self.after(1000, self.update_timer)
 
+	"""
+	1. Initialize a mine variable to 0.
+	2. Loop through the adjacent cells around (row, col).
+	3. If an adjacent cell contains a mine,
+		increment the mine variable.
+	4. If no mines are adjacent,
+		attempt to open the surrounding cells.
+	5. If there are adjacent mines,
+		return the count.
+	"""
 	def checkAdjecentCells(self, row, col):
+		# initialize mine to 0
 		mine = 0
-		cell_list = []
+ 		# increment mine count if a mine is adjacent
 		for i in range(row-1, row+2):
 			for j in range(col-1, col+2):
 				if not (row == i and col == j):
 					if self.isValidCell(i, j):
-						cell_list.append((i,j))
 						if self.isMine(i,j):
-							mine += 1
+							mine += 1 
 
-		if mine == 0:
+		if mine == 0:  # No adjacent mines
 			score = 0
-			for x,y in cell_list:
-				btn = self.buttons_list[x][y]
-				if btn['relief'] == tk.RAISED:
-					btn.config(relief=tk.FLAT)
-					btn['bg'] = 'gray'
-					score += 1
-			self.update_score(score)
-		else:
-			return mine
+			for i in range(row-1, row+2):
+				for j in range(col-1, col+2):
+					if not (row == i and col == j):
+						if self.isValidCell(i, j):
+							btn = self.buttons_list[i][j]
+							if btn['relief'] == tk.RAISED:
+								btn.config(relief=tk.FLAT)
+								btn['bg'] = 'gray'
+								score += 1
+			self.update_score(score)  # Update score
+		else:  # There are adjacent mines
+			print(f"Number of mines around cell at ({row}, {col}): {mine}")
+			return mine # Return the number of adjacent mines
 
 	def showAllMines(self):
 		for x,y in self.mines:

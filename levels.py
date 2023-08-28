@@ -1,22 +1,16 @@
 # levels.py
+
+
 import copy
-# import heapq
-# import multiprocessing.pool as mpool
 import os
 import random
-# import shutil
 import time
-# import math
-
-# have to make a class Individual or replace it or something 
-# also replace the placeholder
 
 # Define Minesweeper-specific tiles
 options = [
     "E",  # Empty cell
     "B",  # Bomb cell
     "1", "2", "3", "4", "5", "6", "7", "8"  # Numbered cells
-    # Add flagged cells and other types as needed
 ]
 
 # Define Minesweeper-specific parameters
@@ -53,8 +47,6 @@ class Individual_Grid(object):
             for number_x, number_y in number_positions:
                 distance = abs(bomb_x - number_x) + abs(bomb_y - number_y)
                 min_distance = min(min_distance, distance)
-            # Subtract distance to encourage placing bombs near numbered cells
-            # fitness -= min_distance
             fitness += 1 / min_distance
         
         self._fitness = fitness
@@ -108,9 +100,9 @@ def generate_successors(population):
 best_overall = None
 best_overall_fitness = float("-inf")
 def ga():
-    global best_overall, best_overall_fitness# Declare the variables as global
+    global best_overall, best_overall_fitness # Declare the variables as global
     pop_limit = 100
-    generations = 50
+    generations = 5
     population = [Individual_Grid.random_individual() for _ in range(pop_limit)]
 
     for generation in range(generations):
