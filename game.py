@@ -181,31 +181,47 @@ class Application(tk.Frame):
 
 
 	def check_cell(self, x, y):
+		if not self.isValidCell(x, y):
+			return
 		btn = self.buttons_list[x][y]
+
 		if btn['relief'] == tk.RAISED:
-			btn.config(relief=tk.FLAT)
-			btn['bg'] = 'gray'
+			adjacent_mines = self.checkAdjecentCells(x, y)
 
-			if self.isMine(x, y):
-				if self.first_Move:
-					self.board[x][y] = ' '
-					self.mines.remove((x,y))
-					self.place_mines(0)
-					self.first_Move = False
-
-					self.updateAdjecentCells(btn, x, y)
-					self.update_score(1)
-				else:
-					btn.config(width=24, height=26)
-					btn['bg'] = 'red'
-					# mine_icon = PhotoImage(file="icons/mine.png")
-					btn['image'] = mine_icon
-					self.showAllMines()	
-					self.game_lost()
+			if adjacent_mines == -1:
+				# It's a mine
+				btn.config(width=24, height=26)
+				btn['bg'] = 'red'
+				btn['image'] = mine_icon
+				self.showAllMines()
+				self.game_lost()
 			else:
-				self.first_Move = False
-				self.updateAdjecentCells(btn, x, y)
+				# Update score only for newly clicked cells.
 				self.update_score(1)
+		# if btn['relief'] == tk.RAISED:
+		# 	btn.config(relief=tk.FLAT)
+		# 	btn['bg'] = 'gray'
+
+		# 	if self.isMine(x, y):
+		# 		if self.first_Move:
+		# 			self.board[x][y] = ' '
+		# 			self.mines.remove((x,y))
+		# 			self.place_mines(0)
+		# 			self.first_Move = False
+
+		# 			self.updateAdjecentCells(btn, x, y)
+		# 			self.update_score(1)
+		# 		else:
+		# 			btn.config(width=24, height=26)
+		# 			btn['bg'] = 'red'
+		# 			# mine_icon = PhotoImage(file="icons/mine.png")
+		# 			btn['image'] = mine_icon
+		# 			self.showAllMines()	
+		# 			self.game_lost()
+		# 	else:
+		# 		self.first_Move = False
+		# 		self.updateAdjecentCells(btn, x, y)
+		# 		self.update_score(1)
 
 		print(f"Cell at ({x}, {y}) clicked")
 
@@ -217,7 +233,7 @@ class Application(tk.Frame):
 
 
 	def isValidCell(self, row, col):
-		is_valid = (row >= 0 and row < 8) and (col >= 0 and col < 7)
+		is_valid = (row >= 0 and row < 9) and (col >= 0 and col < 8)
 		print(f"Cell at ({row}, {col}) is valid: {is_valid}")
 		return is_valid
 
@@ -262,29 +278,58 @@ class Application(tk.Frame):
 	def checkAdjecentCells(self, row, col):
 		# initialize mine to 0
 		mine = 0
- 		# increment mine count if a mine is adjacent
-		for i in range(row-1, row+2):
-			for j in range(col-1, col+2):
-				if not (row == i and col == j):
-					if self.isValidCell(i, j):
-						if self.isMine(i,j):
-							mine += 1 
+		if not self.isValidCell(row, col):
+			return 0
 
-		if mine == 0:  # No adjacent mines
-			score = 0
-			for i in range(row-1, row+2):
-				for j in range(col-1, col+2):
-					if not (row == i and col == j):
-						if self.isValidCell(i, j):
-							btn = self.buttons_list[i][j]
-							if btn['relief'] == tk.RAISED:
-								btn.config(relief=tk.FLAT)
-								btn['bg'] = 'gray'
-								score += 1
-			self.update_score(score)  # Update score
-		else:  # There are adjacent mines
-			print(f"Number of mines around cell at ({row}, {col}): {mine}")
-			return mine # Return the number of adjacent mines
+		# If it's a mine, return -1 to signal a mine.
+		if self.isMine(row, col):
+			return -1
+
+		btn = self.buttons_list[row][col]
+		# If the button was already clicked, return 0 to avoid re-checking.
+		if btn['relief'] == tk.FLAT:
+			return 0
+
+		# Check adjacent cells for mines.
+		for i in range(row - 1, row + 2):
+			for j in range(col - 1, col + 2):
+				if self.isValidCell(i, j) and self.isMine(i, j):
+					mine += 1
+
+		# Update the current cell and expand further if no adjacent mines.
+		btn.config(relief=tk.FLAT, bg='gray')
+		if mine == 0:
+			for i in range(row - 1, row + 2):
+				for j in range(col - 1, col + 2):
+					self.checkAdjecentCells(i, j)
+		else:
+			btn['text'] = str(mine)
+
+		return mine
+
+ 		# # increment mine count if a mine is adjacent
+		# for i in range(row-1, row+2):
+		# 	for j in range(col-1, col+2):
+		# 		if not (row == i and col == j):
+		# 			if self.isValidCell(i, j):
+		# 				if self.isMine(i,j):
+		# 					mine += 1 
+
+		# if mine == 0:  # No adjacent mines
+		# 	score = 0
+		# 	for i in range(row-1, row+2):
+		# 		for j in range(col-1, col+2):
+		# 			if not (row == i and col == j):
+		# 				if self.isValidCell(i, j):
+		# 					btn = self.buttons_list[i][j]
+		# 					if btn['relief'] == tk.RAISED:
+		# 						btn.config(relief=tk.FLAT)
+		# 						btn['bg'] = 'gray'
+		# 						score += 1
+		# 	self.update_score(score)  # Update score
+		# else:  # There are adjacent mines
+		# 	print(f"Number of mines around cell at ({row}, {col}): {mine}")
+		# 	return mine # Return the number of adjacent mines
 
 	def showAllMines(self):
 		for x,y in self.mines:
