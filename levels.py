@@ -105,7 +105,10 @@ def generate_successors(population):
 
 
 # Update the ga function for Minesweeper
+best_overall = None
+best_overall_fitness = float("-inf")
 def ga():
+    global best_overall, best_overall_fitness# Declare the variables as global
     pop_limit = 100
     generations = 50
     population = [Individual_Grid.random_individual() for _ in range(pop_limit)]
@@ -122,16 +125,20 @@ def ga():
         
         # Print information about the best individual in this generation
         best_individual = population[0]
-        print("Best fitness:", best_individual._fitness)
-        
+
+        # Update the best individual across all generations if a better one is found
+        if best_individual._fitness > best_overall_fitness:
+            best_overall = best_individual
+            best_overall_fitness = best_individual._fitness
         # Generate successors for the next generation
+        print("Best fitness:", best_individual._fitness)
         population = generate_successors(population)
     
-    return population
+    return best_overall
 
 def generate_best_level():
-    final_gen = sorted(ga(), key=lambda x: x._fitness, reverse=True)
-    best = final_gen[0]
+    best = ga() # ga returns the best individual across all generations
+    print("Best overall fitness:", best._fitness)
     return best.to_level()
 
 if __name__ == "__main__":
