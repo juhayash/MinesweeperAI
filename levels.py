@@ -54,7 +54,8 @@ class Individual_Grid(object):
                 distance = abs(bomb_x - number_x) + abs(bomb_y - number_y)
                 min_distance = min(min_distance, distance)
             # Subtract distance to encourage placing bombs near numbered cells
-            fitness -= min_distance
+            # fitness -= min_distance
+            fitness += 1 / min_distance
         
         self._fitness = fitness
         return self
