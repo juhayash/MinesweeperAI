@@ -155,7 +155,7 @@ class Application(tk.Frame):
 		self.board = [[' ' for i in range(8)] for j in range(7)] # Initializing the game board
 		self.mines = [] # List to keep track of where the mines are placed
 
-		self.first_Move = True
+		self.first_click = True
 		self.gameRunning = True
 		self.score = 0
 
@@ -183,6 +183,15 @@ class Application(tk.Frame):
 	def check_cell(self, x, y):
 		if not self.isValidCell(x, y):
 			return
+
+		if self.first_click:
+			# Ensure first click is not a mine.
+			while self.isMine(x, y):
+				self.board[x][y] = ' '  # Reset current cell
+				self.mines.remove((x, y))  # Remove the mine coordinate from mines list
+				self.place_mines(1)  # Place a new mine somewhere else
+			self.first_click = False  # Set first_click to False
+
 		btn = self.buttons_list[x][y]
 
 		if btn['relief'] == tk.RAISED:
@@ -363,6 +372,8 @@ class Application(tk.Frame):
 		self.start_game()
 		self.after(100, self.redraw_body_frame)
 		self.score_label['text'] = 0
+		self.first_click = True
+
 
 	def go_home(self):
 		self.top.destroy()
