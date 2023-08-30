@@ -32,7 +32,7 @@ class Application(tk.Frame):
 		self.highscore = 0
     
 	def draw_main_frame(self):
-		self.main_frame = self.create_frame(self, 345, 485, row=0, column=0)
+		self.main_frame = self.create_frame(self, 345, 485, row=0, column=0) # height = 485
 		self.logo = tk.Label(self.main_frame, image=minesweeper_logo)
 		self.logo.grid(row=0, column=0, columnspan=6, padx=22, pady=40)
 		self.draw_level_frame()
@@ -65,8 +65,9 @@ class Application(tk.Frame):
     
 	def draw_game_frames(self):
 		self.header_frame = tk.Frame(self, width=345, height=85)
-		self.body_frame = tk.LabelFrame(self, width=345, height=400, bg='gray70',
-						relief=tk.RIDGE)
+		self.body_frame = tk.LabelFrame(self, width=345, height=365, bg='gray70',
+						relief=tk.RIDGE) # chnage height = 400 to height = 365 according to 
+  										 # the size of the grame of the game
 
 		self.header_frame.grid(row=0, column=0)
 		self.body_frame.grid(row=1, column=0)
@@ -133,9 +134,9 @@ class Application(tk.Frame):
 		self.start_game()
 		
 	def draw_cells(self):
-		for row in range(7):
+		for row in range(9):
 			buttons = []
-			for col in range(8):
+			for col in range(9):
 				if row == 0:
 					pady = 3
 				else:
@@ -153,8 +154,9 @@ class Application(tk.Frame):
 
 	# This method initializes some variables for the game and calls place_mines
 	def start_game(self):
-		self.board = [[' ' for i in range(8)] for j in range(7)] # Initializing the game board
+		self.board = [[' ' for i in range(9)] for j in range(9)] # Initializing the game board
 		self.mines = [] # List to keep track of where the mines are placed
+		self.flags = [[False for _ in range(9)] for _ in range(9)] # Initialize flag grid with False values
 
 		self.first_click = True
 		self.gameRunning = True
@@ -169,8 +171,8 @@ class Application(tk.Frame):
 	# This method is responsible for placing mines on the board randomly
 	def place_mines(self, num):
 		if num > 0:
-			x = random.randint(0, 6)
-			y = random.randint(0, 7)
+			x = random.randint(0, 8)
+			y = random.randint(0, 8)
 
 			if (x,y) in self.mines:
 				self.place_mines(num)
@@ -178,7 +180,7 @@ class Application(tk.Frame):
 				self.board[x][y] = 'X'
 				self.mines.append((x,y))
 				self.place_mines(num-1)
-				print("Mines placed at:", self.mines)
+				# print("Mines placed at:", self.mines)
 
 
 	def check_cell(self, x, y):
@@ -208,43 +210,19 @@ class Application(tk.Frame):
 			else:
 				# Update score only for newly clicked cells.
 				self.update_score(1)
-		# if btn['relief'] == tk.RAISED:
-		# 	btn.config(relief=tk.FLAT)
-		# 	btn['bg'] = 'gray'
 
-		# 	if self.isMine(x, y):
-		# 		if self.first_Move:
-		# 			self.board[x][y] = ' '
-		# 			self.mines.remove((x,y))
-		# 			self.place_mines(0)
-		# 			self.first_Move = False
-
-		# 			self.updateAdjecentCells(btn, x, y)
-		# 			self.update_score(1)
-		# 		else:
-		# 			btn.config(width=24, height=26)
-		# 			btn['bg'] = 'red'
-		# 			# mine_icon = PhotoImage(file="icons/mine.png")
-		# 			btn['image'] = mine_icon
-		# 			self.showAllMines()	
-		# 			self.game_lost()
-		# 	else:
-		# 		self.first_Move = False
-		# 		self.updateAdjecentCells(btn, x, y)
-		# 		self.update_score(1)
-
-		print(f"Cell at ({x}, {y}) clicked")
+		# print(f"Cell at ({x}, {y}) clicked")
 
 
 	def isMine(self, row, col):
 		is_mine = True if (row, col) in self.mines else False
-		print(f"Cell at ({row}, {col}) is a mine: {is_mine}")
+		# print(f"Cell at ({row}, {col}) is a mine: {is_mine}")
 		return is_mine
 
 
 	def isValidCell(self, row, col):
-		is_valid = (row >= 0 and row < 9) and (col >= 0 and col < 8)
-		print(f"Cell at ({row}, {col}) is valid: {is_valid}")
+		is_valid = (row >= 0 and row < 9) and (col >= 0 and col < 9)
+		# print(f"Cell at ({row}, {col}) is valid: {is_valid}")
 		return is_valid
 
 
@@ -347,7 +325,6 @@ class Application(tk.Frame):
 			if btn['relief'] == tk.RAISED:
 				btn.config(relief=tk.FLAT)
 				btn['bg'] = 'red'
-
 				btn.config(width=24, height=26)
 				# mine_icon = PhotoImage(file="icons/mine.png")
 				btn['image'] = mine_icon
@@ -411,12 +388,22 @@ class Application(tk.Frame):
 
 		tk.Label(win, text=msg, wraplength=180, anchor='w').grid(row=0, column=0, padx=10, pady=4)
 
-	def mark_bomb(self, row, col, event=None):
-		if not self.gameRunning:
-			return
-		btn = self.buttons_list[row][col]
-		if btn['relief'] == tk.RAISED: # Ensure the cell is not already opened
-			btn.config(image=bomb_icon, relief=tk.SUNKEN)
+	def mark_bomb(self, row, col, event):
+		if self.gameRunning:
+			btn = self.buttons_list[row][col]
+			self.flags[row][col] = not self.flags[row][col] # Toggle the flag state for the clicked cell
+
+			if btn['relief'] == tk.RAISED: # Ensure the cell is not already opened
+				if self.flags[row][col]:
+					btn.config(width=24, height=26)
+					btn['bg'] = 'red'
+					btn['image'] = flag_icon
+					# btn.config(image=bomb_icon, relief=tk.SUNKEN) # Mark as bomb_icon
+
+			if not self.flags[row][col]:
+				btn.config(text='', relief=tk.RAISED, background='gray70') # Reset to original state
+			# if btn['relief'] == tk.RAISED: # Ensure the cell is not already opened
+			# 	btn.config(image=bomb_icon, relief=tk.SUNKEN)
 
 
 if __name__ == '__main__':
@@ -426,7 +413,7 @@ if __name__ == '__main__':
 	root.geometry('345x450+500+150')
 
 	mine_icon = PhotoImage(file='icons/mine.png')
-	bomb_icon = PhotoImage(file='icons/bomb_icon.png')
+	flag_icon = PhotoImage(file='icons/bomb_icon.png')
 
 	minesweeper_logo = PhotoImage(file='icons/logo.png')
 	sad_face = PhotoImage(file='icons/sad.png')
