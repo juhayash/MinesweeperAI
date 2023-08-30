@@ -147,6 +147,7 @@ class Application(tk.Frame):
 						highlightbackground="#37d3ff", 
 						borderwidth=3)
 				btn.grid(row=row, column=col, padx=(0,0), pady=(pady,0))
+				btn.bind('<Button-3>', partial(self.mark_bomb, row, col))
 				buttons.append(btn)
 			self.buttons_list.append(buttons)
 
@@ -410,6 +411,14 @@ class Application(tk.Frame):
 
 		tk.Label(win, text=msg, wraplength=180, anchor='w').grid(row=0, column=0, padx=10, pady=4)
 
+	def mark_bomb(self, row, col, event=None):
+		if not self.gameRunning:
+			return
+		btn = self.buttons_list[row][col]
+		if btn['relief'] == tk.RAISED: # Ensure the cell is not already opened
+			btn.config(image=bomb_icon, relief=tk.SUNKEN)
+
+
 if __name__ == '__main__':
 	root = tk.Tk()
 	ttk.Style().theme_use('clam')
@@ -417,6 +426,8 @@ if __name__ == '__main__':
 	root.geometry('345x450+500+150')
 
 	mine_icon = PhotoImage(file='icons/mine.png')
+	bomb_icon = PhotoImage(file='icons/bomb_icon.png')
+
 	minesweeper_logo = PhotoImage(file='icons/logo.png')
 	sad_face = PhotoImage(file='icons/sad.png')
 
