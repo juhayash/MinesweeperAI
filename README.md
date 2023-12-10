@@ -24,3 +24,11 @@ The project's uniqueness lies in using genetic algorithms for Minesweeper level 
 This project benefits both players and game designers:
 - **Players**: Offers varied challenges for all skill levels.
 - **Designers**: Inspires the use of genetic algorithms in game design for enhanced and expanded gameplay experiences.
+
+## Mementos
+- **Interface Screenshot**:
+![gameview_screenshot](https://github.com/juhayash/MinesweeperAI/assets/140232266/159c6d4d-2c93-4a0b-b060-24d618ee86c2)
+![gameview2_minesweeper](https://github.com/juhayash/MinesweeperAI/assets/140232266/c73b86ad-ab40-4d4f-bcb8-f0fabe41ade3)
+- **Generated Level Examples**:
+![levels_generated_minesweeper](https://github.com/juhayash/MinesweeperAI/assets/140232266/c8f5135c-3a16-49ae-b083-62dc18ef5e61)
+
