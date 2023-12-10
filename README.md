@@ -37,7 +37,7 @@ This project benefits both players and game designers:
 ### Generated Level Examples
 <div style="position: relative;">
   <span style="position: absolute; top: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;"></span>
-  <img src="https://github.com/juhayash/MinesweeperAI/assets/140232266/c8f5135c-3a16-49ae-b083-62dc18ef5e61" alt="Generated Levels" width="600"/>
+  <img src="https://github.com/juhayash/MinesweeperAI/assets/140232266/c8f5135c-3a16-49ae-b083-62dc18ef5e61" alt="Generated Levels" width="1000"/>
 </div>
 
 
