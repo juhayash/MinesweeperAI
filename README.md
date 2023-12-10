@@ -29,14 +29,14 @@ This project benefits both players and game designers:
 
 ### Interface Screenshots
 <div style="position: relative;">
-  <span style="position: absolute; top: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;">Interface Screenshot</span>
+  <span style="position: absolute; top: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;"></span>
   <img src="https://github.com/juhayash/MinesweeperAI/assets/140232266/159c6d4d-2c93-4a0b-b060-24d618ee86c2" alt="Game View Screenshot 1" width="400"/>
   <img src="https://github.com/juhayash/MinesweeperAI/assets/140232266/c73b86ad-ab40-4d4f-bcb8-f0fabe41ade3" alt="Game View Screenshot 2" width="400"/>
 </div>
 
 ### Generated Level Examples
 <div style="position: relative;">
-  <span style="position: absolute; top: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;">Generated Level Examples</span>
+  <span style="position: absolute; top: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); padding: 5px;"></span>
   <img src="https://github.com/juhayash/MinesweeperAI/assets/140232266/c8f5135c-3a16-49ae-b083-62dc18ef5e61" alt="Generated Levels" width="400"/>
 </div>
 
