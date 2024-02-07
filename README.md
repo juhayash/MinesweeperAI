@@ -3,6 +3,9 @@
 ## Overview
 This project reimagines the creation and experience of Minesweeper levels by utilizing genetic algorithms. The aim of this project is to offer players a unique gameplay experience with levels tailored to different difficulty settings. This approach allows for the introduction of new features and challenges, enhancing the classic Minesweeper game with AI-driven complexity.
 
+## Demo
+![demo2](https://github.com/juhayash/MinesweeperAI/assets/140232266/6938686e-d4a1-4614-99a6-a071b0bc97f2)
+
 ## Problem Addressed
 Traditional Minesweeper games increase difficulty by altering the board size and mine count. Our project maintains a constant board size, varying the number and configuration of mines based on the chosen difficulty level. This approach creates more diverse game boards and offers a progressive difficulty curve.
 
